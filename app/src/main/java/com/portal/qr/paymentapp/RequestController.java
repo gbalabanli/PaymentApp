@@ -53,10 +53,8 @@ public class RequestController {
                         }
                         Gson gson = new Gson();
                         QRModel qrModel = gson.fromJson(responseBody.string(), QRModel.class);
-                        //System.out.println(responseBody.string());
                         System.out.println("qrData: " + qrModel.QRdata);
-                        paymentSuccessListener.onPaymentSuccess(qrModel, amount);
-                        //completePayment(qrModel, amount, paymentSuccessListener);
+                        completePayment(qrModel, amount, paymentSuccessListener);
                     }
                 }
             });
@@ -66,7 +64,7 @@ public class RequestController {
         OkHttpClient client = new OkHttpClient();
 
         MediaType mediaType = MediaType.parse("application/json");
-        RequestBody body = RequestBody.create(mediaType, "{\"returnCode\":1000,\"returnDesc\":\"success\",\"receiptMsgCustomer\":\"beko Campaign\",\"receiptMsgMerchant\":\"beko Campaign Merchant\",\"paymentInfoList\":[{\"paymentProcessorID\":67,\"paymentActionList\":[{\"paymentType\":3,\"amount\":100,\"currencyID\":949,\"vatRate\":800}]}],\"QRdata\":\" "+ qrModel.QRdata + "\"}");
+        RequestBody body = RequestBody.create(mediaType, "{\"returnCode\":1000,\"returnDesc\":\"success\",\"receiptMsgCustomer\":\"beko Campaign\",\"receiptMsgMerchant\":\"beko Campaign Merchant\",\"paymentInfoList\":[{\"paymentProcessorID\":67,\"paymentActionList\":[{\"paymentType\":3,\"amount\":100,\"currencyID\":949,\"vatRate\":800}]}],\"QRdata\":\""+ qrModel.QRdata + "\"}");
 
 
 
@@ -98,6 +96,7 @@ public class RequestController {
 
                     System.out.println(responseBody.string());
                     // PAYMENT SUCCESS WILL BE HERE
+                    paymentSuccessListener.onPaymentSuccess(qrModel, amount);
                 }
             }
         });
