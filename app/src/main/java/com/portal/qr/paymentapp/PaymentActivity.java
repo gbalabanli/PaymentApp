@@ -29,9 +29,9 @@ public class PaymentActivity extends AppCompatActivity {
         int amount = (int) b.get("amount");
         String qrData = (String) b.get("qrData");
 
-        text_receipt.setText(Html.fromHtml("Amount: ..............................................................." + amount + "<br><br>"
+        text_receipt.setText(Html.fromHtml("Amount: ..........................................................." + amount + " TRY<br><br>"
                                                 + "QRdata: " + qrData+ " <br><br>"
-                                                + "-----------------------"));
+                                                ));
     }
 
     private void startMainActivity() {
@@ -39,4 +39,5 @@ public class PaymentActivity extends AppCompatActivity {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }
+
 }

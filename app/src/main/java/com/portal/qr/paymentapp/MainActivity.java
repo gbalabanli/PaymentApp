@@ -16,6 +16,7 @@ import android.widget.EditText;
 public class MainActivity extends AppCompatActivity {
 
     Context context;
+    ProgressDialog progress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,11 +32,9 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String amount = edit_amount.getText().toString();
                 if(amount.isEmpty()) {
-                    showAlert();
+                    showAlert("Are you sure you entered the amount correctly?");
                     return;
                 }
-
-                final ProgressDialog progress;
 
                 progress = ProgressDialog.show(context, "payment in action",
                         "wait until finished", true);
@@ -47,9 +46,23 @@ public class MainActivity extends AppCompatActivity {
                         int amountDecimal = Integer.parseInt(amount);
                         startPaymentSuccessActivity(amountDecimal, qrModel);
                     }
+
+                    @Override
+                    public void onError(Exception e) {
+                        progress.dismiss();
+                        showAlert(e.getMessage());
+                    }
                 });
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(progress != null)
+            progress.dismiss();
+
     }
 
     private void startPaymentSuccessActivity(int amount, QRModel qrModel) {
@@ -60,13 +73,13 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void showAlert() {
+    private void showAlert(String message) {
         AlertDialog.Builder builder;
 
         builder = new AlertDialog.Builder(context);
 
         builder.setTitle("Amount Failure!")
-                .setMessage("Are you sure you entered the amount correctly?")
+                .setMessage(message)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         // continue with delete

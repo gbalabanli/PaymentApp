@@ -1,6 +1,8 @@
 package com.portal.qr.paymentapp;
 
 
+import android.os.Handler;
+
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -52,9 +54,13 @@ public class RequestController {
                             System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
                         }
                         Gson gson = new Gson();
-                        QRModel qrModel = gson.fromJson(responseBody.string(), QRModel.class);
+                        final QRModel qrModel = gson.fromJson(responseBody.string(), QRModel.class);
                         System.out.println("qrData: " + qrModel.QRdata);
+                        Thread.sleep(2000);
                         completePayment(qrModel, amount, paymentSuccessListener);
+
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
                 }
             });
@@ -85,7 +91,7 @@ public class RequestController {
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
+            public void onResponse(Call call, Response response) {
                 try (ResponseBody responseBody = response.body()) {
                     if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
 
@@ -97,6 +103,9 @@ public class RequestController {
                     System.out.println(responseBody.string());
                     // PAYMENT SUCCESS WILL BE HERE
                     paymentSuccessListener.onPaymentSuccess(qrModel, amount);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    paymentSuccessListener.onError(e);
                 }
             }
         });
